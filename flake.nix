@@ -47,11 +47,13 @@
       system: let
         pkgs = import nixpkgs {
           inherit system;
-          overlays = [ overlay ];
+          overlays = [overlay];
         };
       in {
-        overlay = overlay;
         packages.default = pkgs.python3Packages.tinygrad;
       }
-    );
+    )
+    // {
+      overlays.default = overlay;
+    };
 }
