@@ -1,0 +1,13 @@
+name: test
+on:
+  - push
+  - pull_request
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.1.1
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+      - run: nix flake check
+      - run: nix build
