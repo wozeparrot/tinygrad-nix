@@ -30,6 +30,12 @@
                 pname = "gpuctypes";
                 version = inputs.gpuctypes.shortRev;
                 src = inputs.gpuctypes;
+
+                buildInputs = with prev; [
+                  ocl-icd
+                  opencl-headers
+                ];
+
                 doCheck = false;
               };
               tinygrad = python-prev.buildPythonPackage {
