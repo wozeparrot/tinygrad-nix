@@ -32,7 +32,12 @@
                 src = inputs.gpuctypes;
 
                 postPatch = ''
-                  substituteInPlace setup.py --replace "ctypes.util.find_library('OpenCL')" "\"${prev.ocl-icd}/lib/libOpenCL.so\""
+                  # patch correct path to opencl
+                  substituteInPlace gpuctypes/opencl.py --replace "ctypes.util.find_library('OpenCL')" "'${prev.ocl-icd}/lib/libOpenCL.so'"
+
+                  # patch correct path to hip
+                  substituteInPlace gpuctypes/hip.py --replace "/opt/rocm/lib/libamdhip64.so" "${prev.rocmPackages.clr}/lib/libamdhip64.so"
+                  substituteInPlace gpuctypes/hip.py --replace "/opt/rocm/lib/libhiprtc.so" "${prev.rocmPackages.clr}/lib/libhiprtc.so"
                 '';
 
                 doCheck = false;
@@ -61,7 +66,10 @@
           overlays = [overlay];
         };
       in {
-        packages.default = pkgs.python3Packages.tinygrad;
+        packages = rec {
+          inherit (pkgs.python3Packages) gpuctypes tinygrad;
+          default = tinygrad;
+        };
       }
     )
     // {
