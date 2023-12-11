@@ -31,10 +31,9 @@
                 version = inputs.gpuctypes.shortRev;
                 src = inputs.gpuctypes;
 
-                buildInputs = with prev; [
-                  ocl-icd
-                  opencl-headers
-                ];
+                postPatch = ''
+                  substituteInPlace setup.py --replace "ctypes.util.find_library('OpenCL')" "\"${prev.ocl-icd}/lib/libOpenCL.so\""
+                '';
 
                 doCheck = false;
               };
