@@ -5,6 +5,10 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
 
+    gpuctypes = {
+      url = "github:tinygrad/gpuctypes";
+      flake = false;
+    };
     tinygrad = {
       url = "github:tinygrad/tinygrad";
       flake = false;
@@ -21,19 +25,21 @@
         prev.pythonPackagesExtensions
         ++ [
           (
-            python-final: python-prev: {
+            python-final: python-prev: rec {
+              gpuctypes = python-prev.buildPythonPackage {
+                pname = "gpuctypes";
+                version = inputs.gpuctypes.shortRev;
+                src = inputs.gpuctypes;
+                doCheck = false;
+              };
               tinygrad = python-prev.buildPythonPackage {
                 pname = "tinygrad";
                 version = inputs.tinygrad.shortRev;
                 src = inputs.tinygrad;
                 doCheck = false;
                 propagatedBuildInputs = with python-prev; [
-                  networkx
+                  gpuctypes
                   numpy
-                  pillow
-                  pyopencl
-                  pyyaml
-                  requests
                   tqdm
                 ];
               };
