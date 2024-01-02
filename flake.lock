@@ -21,11 +21,11 @@
     "gpuctypes": {
       "flake": false,
       "locked": {
-        "lastModified": 1701033470,
-        "narHash": "sha256-bYSjCrVO6Bd/oGCLLp5AcPEe6fFUdnJwxCzRWK54AG8=",
+        "lastModified": 1704176579,
+        "narHash": "sha256-PyzHGzFDLet0BasxKS9tkp36182Bu6JJvkXFbeHFmlI=",
         "owner": "tinygrad",
         "repo": "gpuctypes",
-        "rev": "3d402bb3bd5536aeb09c55da02277c339b4af089",
+        "rev": "77b94adaf8e27fa5ef7caa0bdd949bd528576d4b",
         "type": "github"
       },
       "original": {
