@@ -27,14 +27,19 @@
                 version = inputs.tinygrad.shortRev;
                 src = inputs.tinygrad;
 
+                patches = [
+                  ./hip.patch
+                  ./comgr.patch
+                ];
+
                 postPatch = ''
                   # patch correct path to opencl
                   substituteInPlace tinygrad/runtime/autogen/opencl.py --replace "ctypes.util.find_library('OpenCL')" "'${prev.ocl-icd}/lib/libOpenCL.so'"
 
                   # patch correct path to hip
-                  substituteInPlace tinygrad/runtime/autogen/hip.py --replace "/opt/rocm/lib/libamdhip64.so" "${prev.rocmPackages.clr}/lib/libamdhip64.so"
-                  substituteInPlace tinygrad/runtime/autogen/hip.py --replace "/opt/rocm/lib/libhiprtc.so" "${prev.rocmPackages.clr}/lib/libhiprtc.so"
-                  substituteInPlace tinygrad/runtime/autogen/hip.py --replace "hipGetDevicePropertiesR0600" "hipGetDeviceProperties"
+                  substituteInPlace tinygrad/runtime/autogen/hip.py \
+                    --replace "/opt/rocm/lib/libamdhip64.so" "${prev.rocmPackages.clr}/lib/libamdhip64.so" \
+                    --replace "/opt/rocm/lib/libhiprtc.so" "${prev.rocmPackages.clr}/lib/libhiprtc.so" \
 
                   # patch correct path to comgr
                   substituteInPlace tinygrad/runtime/autogen/comgr.py --replace "/opt/rocm/lib/libamd_comgr.so" "${prev.rocmPackages.rocm-comgr}/lib/libamd_comgr.so"
