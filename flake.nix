@@ -29,7 +29,6 @@
 
                 patches = [
                   ./hip.patch
-                  ./comgr.patch
                 ];
 
                 postPatch = ''
