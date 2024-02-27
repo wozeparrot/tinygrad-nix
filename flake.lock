@@ -18,22 +18,6 @@
         "type": "github"
       }
     },
-    "gpuctypes": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1706251690,
-        "narHash": "sha256-xUMvMBK1UhZaMZfik0Ia6+siyZGpCkBV+LTnQvzt/rw=",
-        "owner": "tinygrad",
-        "repo": "gpuctypes",
-        "rev": "c4c4394239dce4d4ecfe7016ca268c49cb2d02a4",
-        "type": "github"
-      },
-      "original": {
-        "owner": "tinygrad",
-        "repo": "gpuctypes",
-        "type": "github"
-      }
-    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1708943256,
@@ -53,7 +37,6 @@
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
-        "gpuctypes": "gpuctypes",
         "nixpkgs": "nixpkgs",
         "tinygrad": "tinygrad"
       }

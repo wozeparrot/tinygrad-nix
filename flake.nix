@@ -5,10 +5,6 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
 
-    gpuctypes = {
-      url = "github:tinygrad/gpuctypes";
-      flake = false;
-    };
     tinygrad = {
       url = "github:tinygrad/tinygrad";
       flake = false;
@@ -25,33 +21,33 @@
         prev.pythonPackagesExtensions
         ++ [
           (
-            python-final: python-prev: rec {
-              gpuctypes = python-prev.buildPythonPackage {
-                pname = "gpuctypes";
-                version = inputs.gpuctypes.shortRev;
-                src = inputs.gpuctypes;
-
-                postPatch = ''
-                  # patch correct path to opencl
-                  substituteInPlace gpuctypes/opencl.py --replace "ctypes.util.find_library('OpenCL')" "'${prev.ocl-icd}/lib/libOpenCL.so'"
-
-                  # patch correct path to hip
-                  substituteInPlace gpuctypes/hip.py --replace "/opt/rocm/lib/libamdhip64.so" "${prev.rocmPackages.clr}/lib/libamdhip64.so"
-                  substituteInPlace gpuctypes/hip.py --replace "/opt/rocm/lib/libhiprtc.so" "${prev.rocmPackages.clr}/lib/libhiprtc.so"
-                '';
-
-                doCheck = false;
-              };
+            python-final: python-prev: {
               tinygrad = python-prev.buildPythonPackage {
                 pname = "tinygrad";
                 version = inputs.tinygrad.shortRev;
                 src = inputs.tinygrad;
-                doCheck = false;
+
+                postPatch = ''
+                  # patch correct path to opencl
+                  substituteInPlace tinygrad/runtime/autogen/opencl.py --replace "ctypes.util.find_library('OpenCL')" "'${prev.ocl-icd}/lib/libOpenCL.so'"
+
+                  # patch correct path to hip
+                  substituteInPlace tinygrad/runtime/autogen/hip.py --replace "/opt/rocm/lib/libamdhip64.so" "${prev.rocmPackages.clr}/lib/libamdhip64.so"
+                  substituteInPlace tinygrad/runtime/autogen/hip.py --replace "/opt/rocm/lib/libhiprtc.so" "${prev.rocmPackages.clr}/lib/libhiprtc.so"
+
+                  # patch correct path to comgr
+                  substituteInPlace tinygrad/runtime/autogen/comgr.py --replace "/opt/rocm/lib/libamd_comgr.so" "${prev.rocmPackages.rocm-comgr}/lib/libamd_comgr.so"
+
+                  # patch correct path to hsa
+                  substituteInPlace tinygrad/runtime/autogen/hsa.py --replace "/opt/rocm/lib/libhsa-runtime64.so" "${prev.rocmPackages.clr}/lib/libhsa-runtime64.so"
+                '';
+
                 propagatedBuildInputs = with python-prev; [
-                  gpuctypes
                   numpy
                   tqdm
                 ];
+
+                doCheck = false;
               };
             }
           )
@@ -67,7 +63,7 @@
         };
       in {
         packages = rec {
-          inherit (pkgs.python3Packages) gpuctypes tinygrad;
+          inherit (pkgs.python3Packages) tinygrad;
           default = tinygrad;
         };
       }
