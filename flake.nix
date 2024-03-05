@@ -25,6 +25,7 @@
               tinygrad = python-prev.buildPythonPackage {
                 pname = "tinygrad";
                 version = inputs.tinygrad.shortRev;
+                pyproject = true;
                 src = inputs.tinygrad;
 
                 patches = [
@@ -46,6 +47,11 @@
                   # patch correct path to hsa
                   substituteInPlace tinygrad/runtime/autogen/hsa.py --replace "/opt/rocm/lib/libhsa-runtime64.so" "${prev.rocmPackages.clr}/lib/libhsa-runtime64.so"
                 '';
+
+                nativeBuildInputs = with python-prev; [
+                  setuptools
+                  wheel
+                ];
 
                 propagatedBuildInputs = with python-prev; [
                   numpy
