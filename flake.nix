@@ -20,6 +20,8 @@
     ...
   }: let
     overlay = final: prev: {
+      rocm6 = import inputs.nixpkgs-rocm6 {system = final.system;};
+
       pythonPackagesExtensions =
         prev.pythonPackagesExtensions
         ++ [
@@ -43,7 +45,7 @@
                   substituteInPlace tinygrad/runtime/autogen/hip.py --replace-fail "/opt/rocm/lib/libamdhip64.so" "${prev.rocmPackages.clr}/lib/libamdhip64.so"
 
                   # patch correct path to comgr
-                  substituteInPlace tinygrad/runtime/autogen/comgr.py --replace-fail "/opt/rocm/lib/libamd_comgr.so" "${prev.rocm6.rocmPackages.rocm-comgr}/lib/libamd_comgr.so"
+                  substituteInPlace tinygrad/runtime/autogen/comgr.py --replace-fail "/opt/rocm/lib/libamd_comgr.so" "${final.rocm6.rocmPackages.rocm-comgr}/lib/libamd_comgr.so"
 
                   # patch correct path to hsa
                   substituteInPlace tinygrad/runtime/autogen/hsa.py --replace-fail "/opt/rocm/lib/libhsa-runtime64.so" "${prev.rocmPackages.rocm-runtime}/lib/libhsa-runtime64.so"
@@ -71,12 +73,7 @@
       system: let
         pkgs = import nixpkgs {
           inherit system;
-          overlays = [
-            (_: _: {
-              rocm6 = import inputs.nixpkgs-rocm6 {inherit system;};
-            })
-            overlay
-          ];
+          overlays = [overlay];
         };
       in {
         packages = rec {
