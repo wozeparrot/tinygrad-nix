@@ -34,10 +34,27 @@
         "type": "github"
       }
     },
+    "nixpkgs-rocm6": {
+      "locked": {
+        "lastModified": 1709426688,
+        "narHash": "sha256-rKhzsc+z7HENpF/zCvdmRVXX2RCh0+JawSnVMXTQGW8=",
+        "owner": "mschwaig",
+        "repo": "nixpkgs",
+        "rev": "f37d495cbe943c34510a0ef77417542370e3be12",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mschwaig",
+        "ref": "rocm-6.0.2",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs",
+        "nixpkgs-rocm6": "nixpkgs-rocm6",
         "tinygrad": "tinygrad"
       }
     },

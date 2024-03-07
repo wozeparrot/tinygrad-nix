@@ -5,6 +5,9 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
 
+    # pull in the rocm6 pr until it's merged
+    nixpkgs-rocm6.url = "github:mschwaig/nixpkgs/rocm-6.0.2";
+
     tinygrad = {
       url = "github:tinygrad/tinygrad";
       flake = false;
@@ -40,7 +43,7 @@
                   substituteInPlace tinygrad/runtime/autogen/hip.py --replace-fail "/opt/rocm/lib/libamdhip64.so" "${prev.rocmPackages.clr}/lib/libamdhip64.so"
 
                   # patch correct path to comgr
-                  substituteInPlace tinygrad/runtime/autogen/comgr.py --replace-fail "/opt/rocm/lib/libamd_comgr.so" "${prev.rocmPackages.rocm-comgr}/lib/libamd_comgr.so"
+                  substituteInPlace tinygrad/runtime/autogen/comgr.py --replace-fail "/opt/rocm/lib/libamd_comgr.so" "${prev.rocm6.rocmPackages.rocm-comgr}/lib/libamd_comgr.so"
 
                   # patch correct path to hsa
                   substituteInPlace tinygrad/runtime/autogen/hsa.py --replace-fail "/opt/rocm/lib/libhsa-runtime64.so" "${prev.rocmPackages.rocm-runtime}/lib/libhsa-runtime64.so"
@@ -68,7 +71,12 @@
       system: let
         pkgs = import nixpkgs {
           inherit system;
-          overlays = [overlay];
+          overlays = [
+            (_: _: {
+              rocm6 = import inputs.nixpkgs-rocm6 {inherit system;};
+            })
+            overlay
+          ];
         };
       in {
         packages = rec {
