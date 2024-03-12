@@ -42,14 +42,14 @@
                   substituteInPlace tinygrad/runtime/autogen/opencl.py --replace-fail "ctypes.util.find_library('OpenCL')" "'${prev.ocl-icd}/lib/libOpenCL.so'"
 
                   # patch correct path to hip
-                  substituteInPlace tinygrad/runtime/autogen/hip.py --replace-fail "/opt/rocm/lib/libamdhip64.so" "${final.rocm6.rocmPackages.clr}/lib/libamdhip64.so"
+                  substituteInPlace tinygrad/runtime/autogen/hip.py --replace-fail "os.getenv('ROCM_PATH', '/opt/rocm/')+'/lib/libamdhip64.so'" "${final.rocm6.rocmPackages.clr}/lib/libamdhip64.so"
 
                   # patch correct path to comgr
-                  substituteInPlace tinygrad/runtime/autogen/comgr.py --replace-fail "/opt/rocm/lib/libamd_comgr.so" "${final.rocm6.rocmPackages.rocm-comgr}/lib/libamd_comgr.so"
+                  substituteInPlace tinygrad/runtime/autogen/comgr.py --replace-fail "os.getenv('ROCM_PATH', '/opt/rocm/')+'/lib/libamd_comgr.so'" "${final.rocm6.rocmPackages.rocm-comgr}/lib/libamd_comgr.so"
                   substituteInPlace tinygrad/runtime/driver/hip_comgr.py --replace-fail "/opt/rocm/include" "${final.rocm6.rocmPackages.clr}/include"
 
                   # patch correct path to hsa
-                  substituteInPlace tinygrad/runtime/autogen/hsa.py --replace-fail "/opt/rocm/lib/libhsa-runtime64.so" "${final.rocm6.rocmPackages.rocm-runtime}/lib/libhsa-runtime64.so"
+                  substituteInPlace tinygrad/runtime/autogen/hsa.py --replace-fail "os.getenv('ROCM_PATH', '/opt/rocm/')+'/lib/libhsa-runtime64.so'" "${final.rocm6.rocmPackages.rocm-runtime}/lib/libhsa-runtime64.so"
                 '';
 
                 nativeBuildInputs = with python-prev; [
