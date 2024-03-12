@@ -15,7 +15,7 @@ jobs:
       - uses: DeterminateSystems/magic-nix-cache-action@main
       - run: "git config user.email wozeparrot@users.noreply.github.com"
       - run: "git config user.name tinygrad-nix"
-      - run: "nix flake update --commit-lock-file"
+      - run: "nix flake update tinygrad --commit-lock-file"
       - run: "nix flake check"
       - run: "nix build"
       - run: "git push -u origin main"
