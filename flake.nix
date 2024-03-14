@@ -78,7 +78,7 @@
         };
       in {
         packages = rec {
-          inherit (pkgs.python3Packages) tinygrad;
+          inherit (pkgs.python312Packages) tinygrad;
           default = tinygrad;
         };
       }
