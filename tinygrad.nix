@@ -41,8 +41,8 @@ buildPythonPackage {
     '')
     + (lib.optionalString cudaSupport ''
       # patch correct path to cuda
-      substituteInPlace tinygrad/runtime/autogen/cuda.py --replace-fail "ctypes.util.find_library('nvrtc')" "${cudaPackages.cuda_nvrtc.lib}/lib/libnvrtc.so"
-      substituteInPlace tinygrad/runtime/autogen/cuda.py --replace-fail "ctypes.util.find_library('cuda')" "${cudaPackages.cuda_cudart}/lib/libcuda.so"
+      substituteInPlace tinygrad/runtime/autogen/cuda.py --replace-fail "ctypes.util.find_library('nvrtc')" "'${cudaPackages.cuda_nvrtc.lib}/lib/libnvrtc.so'"
+      substituteInPlace tinygrad/runtime/autogen/cuda.py --replace-fail "ctypes.util.find_library('cuda')" "'${cudaPackages.cuda_cudart}/lib/libcuda.so'"
     '');
 
   nativeBuildInputs = [
