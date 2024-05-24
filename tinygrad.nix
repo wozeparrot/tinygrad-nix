@@ -69,7 +69,6 @@ buildPythonPackage {
   '';
 
   pytestFlagsArray = [
-    "-n auto"
     "test/test_ops.py"
   ];
 }
