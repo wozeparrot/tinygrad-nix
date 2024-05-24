@@ -2,22 +2,20 @@
   lib,
   inputs,
   buildPythonPackage,
-
   ocl-icd,
   rocmPackages,
-
+  cudaPackages,
   setuptools,
   wheel,
   numpy,
   tqdm,
-
   hypothesis,
   torch,
   pytestCheckHook,
   llvmPackages_latest,
-
-  enableOpenCL ? true,
-  enableRocm ? false,
+  openclSupport ? true,
+  rocmSupport ? false,
+  cudaSupport ? false,
 }:
 buildPythonPackage {
   pname = "tinygrad";
@@ -26,11 +24,11 @@ buildPythonPackage {
   src = inputs.tinygrad;
 
   postPatch =
-    (lib.optionalString enableOpenCL ''
+    (lib.optionalString openclSupport ''
       # patch correct path to opencl
       substituteInPlace tinygrad/runtime/autogen/opencl.py --replace-fail "ctypes.util.find_library('OpenCL')" "'${ocl-icd}/lib/libOpenCL.so'"
     '')
-    + (lib.optionalString enableRocm ''
+    + (lib.optionalString rocmSupport ''
       # patch correct path to hip
       substituteInPlace tinygrad/runtime/autogen/hip.py --replace-fail "os.getenv('ROCM_PATH', '/opt/rocm/')+'/lib/libamdhip64.so'" "'${rocmPackages.clr}/lib/libamdhip64.so'"
 
@@ -40,6 +38,11 @@ buildPythonPackage {
 
       # patch correct path to hsa
       substituteInPlace tinygrad/runtime/autogen/hsa.py --replace-fail "os.getenv('ROCM_PATH')+'/lib/libhsa-runtime64.so' if os.getenv('ROCM_PATH') else ctypes.util.find_library('hsa-runtime64')" "'${rocmPackages.rocm-runtime}/lib/libhsa-runtime64.so'"
+    '')
+    + (lib.optionalString cudaSupport ''
+      # patch correct path to cuda
+      substituteInPlace tinygrad/runtime/autogen/cuda.py --replace-fail "ctypes.util.find_library('nvrtc')" "${cudaPackages.cuda_nvrtc.lib}/lib/libnvrtc.so"
+      substituteInPlace tinygrad/runtime/autogen/cuda.py --replace-fail "ctypes.util.find_library('cuda')" "${cudaPackages.cuda_cudart}/lib/libcuda.so"
     '');
 
   nativeBuildInputs = [
