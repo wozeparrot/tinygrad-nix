@@ -58,7 +58,6 @@ buildPythonPackage {
   nativeCheckInputs = [
     hypothesis
     torch
-    pytest-xdist
     pytestCheckHook
     llvmPackages_latest.clang
   ];
