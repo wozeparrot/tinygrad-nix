@@ -20,11 +20,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1710252211,
-        "narHash": "sha256-hQChQpB4LDBaSrNlD6DPLhU9T+R6oyxMCg2V+S7Y1jg=",
+        "lastModified": 1716358718,
+        "narHash": "sha256-NQbegJb2ZZnAqp2EJhWwTf6DrZXSpA6xZCEq+RGV1r0=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "7eeacecff44e05a9fd61b9e03836b66ecde8a525",
+        "rev": "3f316d2a50699a78afe5e77ca486ad553169061e",
         "type": "github"
       },
       "original": {
@@ -34,27 +34,10 @@
         "type": "github"
       }
     },
-    "nixpkgs-rocm6": {
-      "locked": {
-        "lastModified": 1709426688,
-        "narHash": "sha256-rKhzsc+z7HENpF/zCvdmRVXX2RCh0+JawSnVMXTQGW8=",
-        "owner": "mschwaig",
-        "repo": "nixpkgs",
-        "rev": "f37d495cbe943c34510a0ef77417542370e3be12",
-        "type": "github"
-      },
-      "original": {
-        "owner": "mschwaig",
-        "ref": "rocm-6.0.2",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs",
-        "nixpkgs-rocm6": "nixpkgs-rocm6",
         "tinygrad": "tinygrad"
       }
     },
@@ -76,11 +59,11 @@
     "tinygrad": {
       "flake": false,
       "locked": {
-        "lastModified": 1716425001,
-        "narHash": "sha256-fzTGcK5ni9r4Mi2KkQ5aIIiOuB0VPS4sQLwnf1prgQA=",
+        "lastModified": 1716518482,
+        "narHash": "sha256-SuFMndsGKDSFkOo/pYR+gE7Z8jlGsAhTtIJN1ELdCcE=",
         "owner": "tinygrad",
         "repo": "tinygrad",
-        "rev": "792a494eb89e4b12702180a558121a3bbccfba4a",
+        "rev": "4398cc3654e46a71f00e80768bed70a291a59215",
         "type": "github"
       },
       "original": {
