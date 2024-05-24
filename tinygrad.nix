@@ -13,7 +13,6 @@
 
   hypothesis,
   torch,
-  pytest-xdist,
   pytestCheckHook,
   llvmPackages_latest,
 
