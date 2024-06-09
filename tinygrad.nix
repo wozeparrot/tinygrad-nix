@@ -24,7 +24,18 @@ buildPythonPackage {
   src = inputs.tinygrad;
 
   postPatch =
-    (lib.optionalString openclSupport ''
+    ''
+      ls
+      # move hsa back into core
+      mv extra/backends/hsa_driver.py tinygrad/runtime/driver/hsa.py
+      mv extra/backends/hsa_graph.py tinygrad/runtime/graph/hsa.py
+      mv extra/backends/ops_hsa.py tinygrad/runtime/ops_hsa.py
+      substituteInPlace tinygrad/engine/jit.py --replace-fail '"CUDA", "NV", "AMD"' '"CUDA", "NV", "AMD", "HSA"'
+      substituteInPlace tinygrad/engine/search.py --replace-fail '"CUDA", "AMD", "NV"' '"CUDA", "AMD", "NV", "HSA"'
+      # insert line at end of file
+      sed -i -e '$aclass HIPRenderer(AMDRenderer): device = "HSA"' tinygrad/renderer/cstyle.py
+    ''
+    + (lib.optionalString openclSupport ''
       # patch correct path to opencl
       substituteInPlace tinygrad/runtime/autogen/opencl.py --replace-fail "ctypes.util.find_library('OpenCL')" "'${ocl-icd}/lib/libOpenCL.so'"
     '')
