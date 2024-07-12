@@ -27,7 +27,7 @@ buildPythonPackage {
     ''
       ls
       # move hsa back into core
-      mv extra/backends/hsa_driver.py tinygrad/runtime/driver/hsa.py
+      mv extra/backends/hsa_driver.py tinygrad/runtime/support/hsa.py
       mv extra/backends/hsa_graph.py tinygrad/runtime/graph/hsa.py
       mv extra/backends/ops_hsa.py tinygrad/runtime/ops_hsa.py
       substituteInPlace tinygrad/engine/jit.py --replace-fail '"CUDA", "NV", "AMD"' '"CUDA", "NV", "AMD", "HSA"'
