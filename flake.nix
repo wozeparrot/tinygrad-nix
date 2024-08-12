@@ -36,11 +36,23 @@
         pkgs = import nixpkgs {
           inherit system;
           overlays = [overlay];
+          config.allowUnfree = true;
         };
       in {
         packages = rec {
           inherit (pkgs.python312Packages) tinygrad;
-          default = tinygrad;
+          tinygradWithRocm = tinygrad.override {
+            rocmSupport = true;
+          };
+          tinygradWithCuda = tinygrad.override {
+            cudaSupport = true;
+          };
+          tinygradFull = tinygrad.override {
+            rocmSupport = true;
+            cudaSupport = true;
+            openclSupport = true;
+          };
+          default = tinygradFull;
         };
       }
     )
