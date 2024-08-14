@@ -9,10 +9,11 @@
   wheel,
   numpy,
   tqdm,
-  hypothesis,
   torch,
+  clang,
+  pytest-xdist,
+  hypothesis,
   pytestCheckHook,
-  llvmPackages_latest,
   openclSupport ? true,
   rocmSupport ? false,
   cudaSupport ? false,
@@ -25,7 +26,28 @@ buildPythonPackage {
 
   postPatch =
     ''
-      ls
+      # copy extra into core tinygrad
+      cp -r ${inputs.tinygrad}/extra ./tinygrad/
+
+      # recursively find all packages
+      paths=$(find tinygrad -type d -name '__pycache__' -prune -o -type d -print)
+      # replace / in path with .
+      paths=$(echo $paths | sed 's/\//\./g')
+      # write paths to file
+      for path in $paths; do
+        echo "$path" >> packages.txt
+      done
+
+      # patch packages in setup.py to read from the file
+      substituteInPlace setup.py --replace-fail "packages = ['tinygrad', 'tinygrad.runtime.autogen', 'tinygrad.codegen', 'tinygrad.nn', 'tinygrad.renderer', 'tinygrad.engine'," "packages=open('./packages.txt').read().splitlines(),"
+      substituteInPlace setup.py --replace-fail "'tinygrad.runtime', 'tinygrad.runtime.support', 'tinygrad.runtime.graph', 'tinygrad.shape']," ""
+
+      # patch all references to extra to tinygrad.extra
+      files=$(find tinygrad -type f -name '__init__.py' -prune -o -type f -name '*.py' -print)
+      for file in $files; do
+        substituteInPlace "$file" --replace "extra." "tinygrad.extra."
+      done
+
       # move hsa back into core
       mv extra/backends/hsa_driver.py tinygrad/runtime/support/hsa.py
       mv extra/backends/hsa_graph.py tinygrad/runtime/graph/hsa.py
@@ -69,10 +91,11 @@ buildPythonPackage {
   pythonImportsCheck = ["tinygrad"];
 
   nativeCheckInputs = [
-    hypothesis
     torch
+    clang
+    pytest-xdist
+    hypothesis
     pytestCheckHook
-    llvmPackages_latest.clang
   ];
 
   preCheck = ''
