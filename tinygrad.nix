@@ -30,13 +30,14 @@ buildPythonPackage {
       cp -r ${inputs.tinygrad}/extra ./tinygrad/
 
       # recursively find all packages
-      paths=$(find tinygrad -type d -name '__pycache__' -prune -o -type d -print)
+      paths=$(find tinygrad -type d -name '__pycache__' -prune -o -type d -name 'assets' -prune -o -type d -print)
       # replace / in path with .
       paths=$(echo $paths | sed 's/\//\./g')
       # write paths to file
       for path in $paths; do
         echo "$path" >> packages.txt
       done
+      cat packages.txt
 
       # patch packages in setup.py to read from the file
       substituteInPlace setup.py --replace-fail "packages = ['tinygrad', 'tinygrad.runtime.autogen', 'tinygrad.codegen', 'tinygrad.nn', 'tinygrad.renderer', 'tinygrad.engine'," "packages=open('./packages.txt').read().splitlines(),"
