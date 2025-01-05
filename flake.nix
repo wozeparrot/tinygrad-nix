@@ -21,9 +21,20 @@
         prev.pythonPackagesExtensions
         ++ [
           (
-            python-final: python-prev: {
+            python-final: python-prev: rec {
               tinygrad = python-final.pythonPackages.callPackage ./tinygrad.nix {
                 inherit inputs;
+              };
+              tinygradWithRocm = tinygrad.override {
+                rocmSupport = true;
+              };
+              tinygradWithCuda = tinygrad.override {
+                cudaSupport = true;
+              };
+              tinygradFull = tinygrad.override {
+                rocmSupport = true;
+                cudaSupport = true;
+                openclSupport = true;
               };
             }
           )
@@ -40,18 +51,7 @@
         };
       in {
         packages = rec {
-          inherit (pkgs.python312Packages) tinygrad;
-          tinygradWithRocm = tinygrad.override {
-            rocmSupport = true;
-          };
-          tinygradWithCuda = tinygrad.override {
-            cudaSupport = true;
-          };
-          tinygradFull = tinygrad.override {
-            rocmSupport = true;
-            cudaSupport = true;
-            openclSupport = true;
-          };
+          inherit (pkgs.python312Packages) tinygrad tinygradWithRocm tinygradWithCuda tinygradFull;
           default = tinygradFull;
         };
       }
