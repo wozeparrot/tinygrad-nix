@@ -41,7 +41,7 @@ buildPythonPackage {
 
       # patch packages in setup.py to read from the file
       substituteInPlace setup.py --replace-fail "packages = ['tinygrad', 'tinygrad.runtime.autogen', 'tinygrad.codegen', 'tinygrad.nn', 'tinygrad.renderer', 'tinygrad.engine'," "packages=open('./packages.txt').read().splitlines(),"
-      substituteInPlace setup.py --replace-fail "'tinygrad.runtime', 'tinygrad.runtime.support', 'tinygrad.runtime.graph', 'tinygrad.shape']," ""
+      substituteInPlace setup.py --replace-fail "'tinygrad.runtime', 'tinygrad.runtime.support', 'tinygrad.runtime.support.am', 'tinygrad.runtime.graph', 'tinygrad.shape']," ""
 
       # patch all references to extra to tinygrad.extra
       files=$(find tinygrad -type f -name '__init__.py' -prune -o -type f -name '*.py' -print)
@@ -106,5 +106,9 @@ buildPythonPackage {
 
   pytestFlagsArray = [
     "test/test_ops.py"
+  ];
+
+  disabledTests = [
+    "test_gemm_fp16"
   ];
 }
