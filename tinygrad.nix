@@ -2,6 +2,7 @@
   lib,
   inputs,
   buildPythonPackage,
+  addDriverRunpath,
   ocl-icd,
   rocmPackages,
   cudaPackages,
@@ -75,8 +76,14 @@ buildPythonPackage {
     '')
     + (lib.optionalString cudaSupport ''
       # patch correct path to cuda
-      substituteInPlace tinygrad/runtime/autogen/nvrtc.py --replace-fail "ctypes.util.find_library('nvrtc')" "'${cudaPackages.cuda_nvrtc.lib}/lib/libnvrtc.so'"
-      substituteInPlace tinygrad/runtime/autogen/cuda.py --replace-fail "ctypes.util.find_library('cuda')" "'${cudaPackages.cuda_cudart}/lib/libcuda.so'"
+      substituteInPlace tinygrad/runtime/autogen/nvrtc.py --replace-fail "ctypes.util.find_library('nvrtc')" "'${lib.getLib cudaPackages.cuda_nvrtc}/lib/libnvrtc.so'"
+      substituteInPlace tinygrad/runtime/autogen/cuda.py --replace-fail "ctypes.util.find_library('cuda')" "'${addDriverRunpath.driverLink}/lib/libcuda.so'"
+
+      # patch correct path to include
+      substituteInPlace tinygrad/runtime/support/compiler_cuda.py \
+        --replace-fail \
+        ', "-I/usr/local/cuda/include", "-I/usr/include", "-I/opt/cuda/include/"' \
+        ', "-I${lib.getDev cudaPackages.cuda_cudart}/include/"'
     '');
 
   nativeBuildInputs = [
