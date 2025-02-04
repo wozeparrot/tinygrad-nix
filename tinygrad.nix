@@ -60,7 +60,7 @@ buildPythonPackage {
       sed -i -e '$aclass HIPRenderer(AMDRenderer): device = "HSA"' tinygrad/renderer/cstyle.py
 
       # make viz work
-      substituteInPlace tinygrad/viz/serve.py --replace-fail "os.path.dirname(__file__)" '"${inputs.tinygrad}/viz/"'
+      substituteInPlace tinygrad/viz/serve.py --replace-fail "os.path.dirname(__file__)" '"${inputs.tinygrad}/tinygrad/viz/"'
     ''
     + (lib.optionalString openclSupport ''
       # patch correct path to opencl
