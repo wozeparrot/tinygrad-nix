@@ -58,6 +58,9 @@ buildPythonPackage {
       substituteInPlace tinygrad/engine/search.py --replace-fail '"CUDA", "AMD", "NV"' '"CUDA", "AMD", "NV", "HSA"'
       # insert line at end of file
       sed -i -e '$aclass HIPRenderer(AMDRenderer): device = "HSA"' tinygrad/renderer/cstyle.py
+
+      # make viz work
+      substituteInPlace tinygrad/viz/serve.py --replace-fail "os.path.dirname(__file__)" '"${inputs.tinygrad}/viz/"'
     ''
     + (lib.optionalString openclSupport ''
       # patch correct path to opencl
