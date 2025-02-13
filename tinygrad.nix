@@ -112,6 +112,7 @@ buildPythonPackage {
   preCheck = ''
     export HOME=$(mktemp -d)
     export CLANG=1
+    export CC=${clang}/bin/clang
   '';
 
   pytestFlagsArray = [
