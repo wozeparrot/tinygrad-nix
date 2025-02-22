@@ -15,6 +15,7 @@
   pytest-xdist,
   hypothesis,
   pytestCheckHook,
+  writableTmpDirAsHomeHook,
   openclSupport ? true,
   rocmSupport ? false,
   cudaSupport ? false,
@@ -41,8 +42,9 @@ buildPythonPackage {
       cat packages.txt
 
       # patch packages in setup.py to read from the file
-      substituteInPlace setup.py --replace-fail "packages = ['tinygrad', 'tinygrad.runtime.autogen', 'tinygrad.codegen', 'tinygrad.nn', 'tinygrad.renderer', 'tinygrad.engine'," "packages=open('./packages.txt').read().splitlines(),"
-      substituteInPlace setup.py --replace-fail "'tinygrad.runtime', 'tinygrad.runtime.support', 'tinygrad.runtime.support.am', 'tinygrad.runtime.graph', 'tinygrad.shape']," ""
+      substituteInPlace setup.py --replace-fail "packages = ['tinygrad', 'tinygrad.runtime.autogen', 'tinygrad.runtime.autogen.am', 'tinygrad.codegen', 'tinygrad.nn'," "packages=open('./packages.txt').read().splitlines(),"
+      substituteInPlace setup.py --replace-fail "'tinygrad.renderer', 'tinygrad.engine', 'tinygrad.viz', 'tinygrad.runtime', 'tinygrad.runtime.support'," ""
+      substituteInPlace setup.py --replace-fail "'tinygrad.runtime.support.am', 'tinygrad.runtime.graph', 'tinygrad.shape']," ""
 
       # patch all references to extra to tinygrad.extra
       files=$(find tinygrad -type f -name '__init__.py' -prune -o -type f -name '*.py' -print)
@@ -102,16 +104,17 @@ buildPythonPackage {
   pythonImportsCheck = ["tinygrad"];
 
   nativeCheckInputs = [
+    pytestCheckHook
+    writableTmpDirAsHomeHook
+
     torch
     clang
     pytest-xdist
     hypothesis
-    pytestCheckHook
   ];
 
   preCheck = ''
-    export HOME=$(mktemp -d)
-    export CLANG=1
+    export CPU=1
     export CC=${clang}/bin/clang
   '';
 
