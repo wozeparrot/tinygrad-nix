@@ -4,6 +4,7 @@
   buildPythonPackage,
   addDriverRunpath,
   ocl-icd,
+  llvmPackages_latest,
   rocmPackages,
   cudaPackages,
   setuptools,
@@ -16,6 +17,7 @@
   hypothesis,
   pytestCheckHook,
   writableTmpDirAsHomeHook,
+  llvmSupport ? true,
   openclSupport ? true,
   rocmSupport ? false,
   cudaSupport ? false,
@@ -52,18 +54,13 @@ buildPythonPackage {
         substituteInPlace "$file" --replace "extra." "tinygrad.extra."
       done
 
-      # move hsa back into core
-      mv extra/backends/hsa_driver.py tinygrad/runtime/support/hsa.py
-      mv extra/backends/hsa_graph.py tinygrad/runtime/graph/hsa.py
-      mv extra/backends/ops_hsa.py tinygrad/runtime/ops_hsa.py
-      substituteInPlace tinygrad/engine/jit.py --replace-fail '"CUDA", "NV", "AMD"' '"CUDA", "NV", "AMD", "HSA"'
-      substituteInPlace tinygrad/engine/search.py --replace-fail '"CUDA", "AMD", "NV"' '"CUDA", "AMD", "NV", "HSA"'
-      # insert line at end of file
-      sed -i -e '$aclass HIPRenderer(AMDRenderer): device = "HSA"' tinygrad/renderer/cstyle.py
-
       # make viz work
       substituteInPlace tinygrad/viz/serve.py --replace-fail "os.path.dirname(__file__)" '"${inputs.tinygrad}/tinygrad/viz/"'
     ''
+    + (lib.optionalString llvmSupport ''
+      # patch correct path to llvm
+      substituteInPlace tinygrad/runtime/support/llvm.py --replace-fail "ctypes.util.find_library('LLVM')" '"${llvmPackages_latest.llvm.lib}/lib/libLLVM.so"'
+    '')
     + (lib.optionalString openclSupport ''
       # patch correct path to opencl
       substituteInPlace tinygrad/runtime/autogen/opencl.py --replace-fail "ctypes.util.find_library('OpenCL')" "'${ocl-icd}/lib/libOpenCL.so'"
