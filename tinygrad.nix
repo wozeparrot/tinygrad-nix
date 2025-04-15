@@ -84,8 +84,8 @@ buildPythonPackage {
       # patch correct path to include
       substituteInPlace tinygrad/runtime/support/compiler_cuda.py \
         --replace-fail \
-        ', "-I/usr/local/cuda/include", "-I/usr/include", "-I/opt/cuda/include/"' \
-        ', "-I${lib.getDev cudaPackages.cuda_cudart}/include/"'
+        '"-I/usr/local/cuda/include", "-I/usr/include", "-I/opt/cuda/include"' \
+        '"-I${lib.getDev cudaPackages.cuda_cudart}/include/"'
     '');
 
   nativeBuildInputs = [
