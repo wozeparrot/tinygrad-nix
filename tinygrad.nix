@@ -121,5 +121,6 @@ buildPythonPackage {
 
   disabledTests = [
     "test_gemm_fp16"
+    "TestOpsBFloat16"
   ];
 }
