@@ -22,7 +22,7 @@
         ++ [
           (
             python-final: python-prev: rec {
-              tinygrad = python-final.pythonPackages.callPackage ./tinygrad.nix {
+              tinygrad = python-final.callPackage ./tinygrad.nix {
                 inherit inputs;
               };
               tinygradWithRocm = tinygrad.override {
