@@ -1,6 +1,7 @@
 {
   lib,
   inputs,
+  stdenv,
   buildPythonPackage,
   addDriverRunpath,
   ocl-icd,
@@ -56,6 +57,9 @@ buildPythonPackage {
 
       # make viz work
       substituteInPlace tinygrad/viz/serve.py --replace-fail "os.path.dirname(__file__)" '"${inputs.tinygrad}/tinygrad/viz/"'
+
+      # patch libc
+      substituteInPlace tinygrad/runtime/autogen/libc.py --replace-fail "ctypes.util.find_library('c')" '"${stdenv.cc.libc}/lib/libc.so.6"'
     ''
     + (lib.optionalString llvmSupport ''
       # patch correct path to llvm
