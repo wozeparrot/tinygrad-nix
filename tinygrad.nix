@@ -14,6 +14,7 @@
   tqdm,
   torch,
   clang,
+  gcc,
   pytest-xdist,
   hypothesis,
   pytestCheckHook,
@@ -60,6 +61,9 @@ buildPythonPackage {
 
       # patch libc
       substituteInPlace tinygrad/runtime/autogen/libc.py --replace-fail "ctypes.util.find_library('c')" '"${stdenv.cc.libc}/lib/libc.so.6"'
+
+      # patch gcc
+      substituteInPlace tinygrad/device.py --replace-fail "ctypes.util.find_library('atomic')" '"${gcc.cc.lib}/lib/libatomic.so"'
     ''
     + (lib.optionalString llvmSupport ''
       # patch correct path to llvm
