@@ -48,7 +48,8 @@ buildPythonPackage {
       # patch packages in setup.py to read from the file
       substituteInPlace setup.py --replace-fail "packages = ['tinygrad', 'tinygrad.runtime.autogen', 'tinygrad.runtime.autogen.am', 'tinygrad.codegen', 'tinygrad.nn'," "packages=open('./packages.txt').read().splitlines(),"
       substituteInPlace setup.py --replace-fail "'tinygrad.renderer', 'tinygrad.engine', 'tinygrad.viz', 'tinygrad.runtime', 'tinygrad.runtime.support', 'tinygrad.kernelize'," ""
-      substituteInPlace setup.py --replace-fail "'tinygrad.runtime.support.am', 'tinygrad.runtime.graph', 'tinygrad.shape', 'tinygrad.uop', 'tinygrad.opt']," ""
+      substituteInPlace setup.py --replace-fail "'tinygrad.runtime.support.am', 'tinygrad.runtime.graph', 'tinygrad.shape', 'tinygrad.uop', 'tinygrad.opt'," ""
+      substituteInPlace setup.py --replace-fail "'tinygrad.runtime.support.nv']," ""
 
       # patch all references to extra to tinygrad.extra
       files=$(find tinygrad -type f -name '__init__.py' -prune -o -type f -name '*.py' -print)
@@ -63,7 +64,7 @@ buildPythonPackage {
       substituteInPlace tinygrad/runtime/autogen/libc.py --replace-fail "ctypes.util.find_library('c')" '"${stdenv.cc.libc}/lib/libc.so.6"'
 
       # patch gcc
-      substituteInPlace tinygrad/device.py --replace-fail "ctypes.util.find_library('atomic')" '"${gcc.cc.lib}/lib/libatomic.so"'
+      substituteInPlace tinygrad/runtime/support/system.py --replace-fail "ctypes.util.find_library('atomic')" '"${gcc.cc.lib}/lib/libatomic.so"'
     ''
     + (lib.optionalString llvmSupport ''
       # patch correct path to llvm
