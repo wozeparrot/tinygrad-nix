@@ -49,7 +49,7 @@ buildPythonPackage {
       substituteInPlace setup.py --replace-fail "packages = ['tinygrad', 'tinygrad.runtime.autogen', 'tinygrad.runtime.autogen.am', 'tinygrad.codegen', 'tinygrad.nn'," "packages=open('./packages.txt').read().splitlines(),"
       substituteInPlace setup.py --replace-fail "'tinygrad.renderer', 'tinygrad.engine', 'tinygrad.viz', 'tinygrad.runtime', 'tinygrad.runtime.support', 'tinygrad.kernelize'," ""
       substituteInPlace setup.py --replace-fail "'tinygrad.runtime.support.am', 'tinygrad.runtime.graph', 'tinygrad.shape', 'tinygrad.uop', 'tinygrad.opt'," ""
-      substituteInPlace setup.py --replace-fail "'tinygrad.runtime.support.nv']," ""
+      substituteInPlace setup.py --replace-fail "'tinygrad.runtime.support.nv', 'tinygrad.apps']," ""
 
       # patch all references to extra to tinygrad.extra
       files=$(find tinygrad -type f -name '__init__.py' -prune -o -type f -name '*.py' -print)
