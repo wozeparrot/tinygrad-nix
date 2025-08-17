@@ -13,7 +13,6 @@
   numpy,
   tqdm,
   torch,
-  clang,
   gcc,
   pytest-xdist,
   hypothesis,
@@ -46,10 +45,7 @@ buildPythonPackage {
       cat packages.txt
 
       # patch packages in setup.py to read from the file
-      substituteInPlace setup.py --replace-fail "packages = ['tinygrad', 'tinygrad.runtime.autogen', 'tinygrad.runtime.autogen.am', 'tinygrad.codegen', 'tinygrad.nn'," "packages=open('./packages.txt').read().splitlines(),"
-      substituteInPlace setup.py --replace-fail "'tinygrad.renderer', 'tinygrad.engine', 'tinygrad.viz', 'tinygrad.runtime', 'tinygrad.runtime.support', 'tinygrad.schedule'," ""
-      substituteInPlace setup.py --replace-fail "'tinygrad.runtime.support.am', 'tinygrad.runtime.graph', 'tinygrad.shape', 'tinygrad.uop', 'tinygrad.codegen.opt'," ""
-      substituteInPlace setup.py --replace-fail "'tinygrad.runtime.support.nv', 'tinygrad.apps']," ""
+      sed -i "/^\s*packages = \[/,/^\s*\],/c\      packages=open('./packages.txt').read().splitlines()," setup.py
 
       # patch all references to extra to tinygrad.extra
       files=$(find tinygrad -type f -name '__init__.py' -prune -o -type f -name '*.py' -print)
@@ -114,14 +110,14 @@ buildPythonPackage {
     writableTmpDirAsHomeHook
 
     torch
-    clang
+    llvmPackages_latest.clang-unwrapped
     pytest-xdist
     hypothesis
   ];
 
   preCheck = ''
     export CPU=1
-    export CC=${clang}/bin/clang
+    export CC=${llvmPackages_latest.clang-unwrapped}/bin/clang
   '';
 
   pytestFlagsArray = [
