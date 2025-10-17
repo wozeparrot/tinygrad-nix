@@ -35,7 +35,7 @@ buildPythonPackage {
       cp -r ${inputs.tinygrad}/extra ./tinygrad/
 
       # recursively find all packages
-      paths=$(find tinygrad -type d -name '__pycache__' -prune -o -type d -name 'assets' -prune -o -type d -print)
+      paths=$(find tinygrad -type d -name '__pycache__' -prune -o -type d -name 'assets' -prune -o -type d -name 'installer' -prune -o -type d -print)
       # replace / in path with .
       paths=$(echo $paths | sed 's/\//\./g')
       # write paths to file
