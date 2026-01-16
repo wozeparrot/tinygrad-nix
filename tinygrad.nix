@@ -47,18 +47,18 @@ buildPythonPackage {
       substituteInPlace tinygrad/viz/serve.py --replace-fail "os.path.dirname(__file__)" '"${inputs.tinygrad}/tinygrad/viz/"'
 
       # patch libc
-      substituteInPlace tinygrad/runtime/autogen/libc.py --replace-fail "find_library('c')" '"${stdenv.cc.libc}/lib/libc.so.6"'
+      substituteInPlace tinygrad/runtime/autogen/libc.py --replace-fail "'libc', 'c'" '"libc", "${stdenv.cc.libc}/lib/libc.so.6"'
 
       # patch gcc
       substituteInPlace tinygrad/runtime/support/system.py --replace-fail "ctypes.util.find_library('atomic')" '"${gcc.cc.lib}/lib/libatomic.so"'
     ''
     + (lib.optionalString llvmSupport ''
       # patch correct path to llvm
-      substituteInPlace tinygrad/runtime/support/llvm.py --replace-fail "ctypes.util.find_library('LLVM')" '"${llvmPackages_latest.llvm.lib}/lib/libLLVM.so"'
+      substituteInPlace tinygrad/runtime/autogen/llvm.py --replace-fail "['LLVM', 'LLVM-21', 'LLVM-20', 'LLVM-19', 'LLVM-18', 'LLVM-17', 'LLVM-16', 'LLVM-15', 'LLVM-14']" '"${llvmPackages_latest.llvm.lib}/lib/libLLVM.so"'
     '')
     + (lib.optionalString openclSupport ''
       # patch correct path to opencl
-      substituteInPlace tinygrad/runtime/autogen/opencl.py --replace-fail "find_library('OpenCL')" "'${ocl-icd}/lib/libOpenCL.so'"
+      substituteInPlace tinygrad/runtime/autogen/opencl.py --replace-fail "'OpenCL'" "'${ocl-icd}/lib/libOpenCL.so'"
     '')
     + (lib.optionalString rocmSupport ''
       # patch correct path to hip
@@ -73,8 +73,8 @@ buildPythonPackage {
     '')
     + (lib.optionalString cudaSupport ''
       # patch correct path to cuda
-      substituteInPlace tinygrad/runtime/autogen/nvrtc.py --replace-fail "find_library('nvrtc')" "'${lib.getLib cudaPackages.cuda_nvrtc}/lib/libnvrtc.so'"
-      substituteInPlace tinygrad/runtime/autogen/cuda.py --replace-fail "find_library('cuda')" "'${addDriverRunpath.driverLink}/lib/libcuda.so'"
+      substituteInPlace tinygrad/runtime/autogen/nvrtc.py --replace-fail "'nvrtc', 'nvrtc'" "'nvrtc', '${lib.getLib cudaPackages.cuda_nvrtc}/lib/libnvrtc.so'"
+      substituteInPlace tinygrad/runtime/autogen/cuda.py --replace-fail "'cuda', 'cuda'" "'cuda', '${addDriverRunpath.driverLink}/lib/libcuda.so'"
 
       # patch correct path to include
       substituteInPlace tinygrad/runtime/support/compiler_cuda.py \
