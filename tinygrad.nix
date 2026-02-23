@@ -16,6 +16,8 @@
   gcc,
   pytest-xdist,
   hypothesis,
+  openai,
+  z3-solver,
   pytestCheckHook,
   writableTmpDirAsHomeHook,
   llvmSupport ? true,
@@ -51,6 +53,9 @@ buildPythonPackage {
 
       # patch gcc
       substituteInPlace tinygrad/runtime/support/system.py --replace-fail "ctypes.util.find_library('atomic')" '"${gcc.cc.lib}/lib/libatomic.so"'
+
+      # patch libclang
+      substituteInPlace tinygrad/runtime/autogen/libclang.py --replace-fail "'/opt/homebrew/opt/llvm@20/lib/libclang.dylib' if OSX else ['clang-20', 'clang']" "'${llvmPackages_latest.libclang.lib}/lib/libclang.so'"
     ''
     + (lib.optionalString llvmSupport ''
       # patch correct path to llvm
@@ -103,20 +108,36 @@ buildPythonPackage {
     llvmPackages_latest.clang-unwrapped
     pytest-xdist
     hypothesis
+    openai
+    z3-solver
   ];
 
   preCheck = ''
-    export CPU=1
+    export DEV=CPU
     export CC=${llvmPackages_latest.clang-unwrapped}/bin/clang
   '';
 
   pytestFlagsArray = [
-    "test/test_ops.py"
+    "test/null"
+    "test/backend"
   ];
 
   disabledTests = [
-    "test_gemm_fp16"
-    "TestOpsBFloat16"
-    "test_div_int"
+    "test_index_mnist"
+    "test_index_mnist_opt"
+    "test_index_mnist_opt_split"
+    "test_index_mnist_split"
+    "test_model_load"
+    "test_mnist_val"
+    "test_dataset_is_realized"
+    "test_llama_basic"
+    "test_llama_control_char"
+    "test_llama_bytes"
+    "test_llama_special1"
+    "test_llama_special2"
+    "test_llama_repeat"
+    "test_llama_pat"
+    "test_llama_early_tokenize"
+    "test_autogen.py"
   ];
 }
