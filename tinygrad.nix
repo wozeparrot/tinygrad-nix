@@ -55,31 +55,31 @@ buildPythonPackage {
       substituteInPlace tinygrad/runtime/support/system.py --replace-fail "ctypes.util.find_library('atomic')" '"${gcc.cc.lib}/lib/libatomic.so"'
 
       # patch libclang
-      substituteInPlace tinygrad/runtime/autogen/libclang.py --replace-fail "'/opt/homebrew/opt/llvm@20/lib/libclang.dylib' if OSX else ['clang-20', 'clang']" "'${llvmPackages_latest.libclang.lib}/lib/libclang.so'"
+      sed -i "s|^dll = c\.DLL.*|dll = c.DLL('libclang', '${llvmPackages_latest.libclang.lib}/lib/libclang.so')|" tinygrad/runtime/autogen/libclang.py
     ''
     + (lib.optionalString llvmSupport ''
       # patch correct path to llvm
-      substituteInPlace tinygrad/runtime/autogen/llvm.py --replace-fail "['LLVM', 'LLVM-21', 'LLVM-20', 'LLVM-19', 'LLVM-18', 'LLVM-17', 'LLVM-16', 'LLVM-15', 'LLVM-14']" '"${llvmPackages_latest.llvm.lib}/lib/libLLVM.so"'
+      sed -i "s|^dll = c\.DLL.*|dll = c.DLL('llvm', '${llvmPackages_latest.llvm.lib}/lib/libLLVM.so')|" tinygrad/runtime/autogen/llvm.py
     '')
     + (lib.optionalString openclSupport ''
       # patch correct path to opencl
-      substituteInPlace tinygrad/runtime/autogen/opencl.py --replace-fail "'OpenCL'" "'${ocl-icd}/lib/libOpenCL.so'"
+      sed -i "s|^dll = c\.DLL.*|dll = c.DLL('opencl', '${ocl-icd}/lib/libOpenCL.so')|" tinygrad/runtime/autogen/opencl.py
     '')
     + (lib.optionalString rocmSupport ''
       # patch correct path to hip
-      substituteInPlace tinygrad/runtime/autogen/hip.py --replace-fail "os.getenv('ROCM_PATH', '/opt/rocm')" "'${rocmPackages.clr}'"
+      sed -i "s|^dll = c\.DLL.*|dll = c.DLL('hip', '${rocmPackages.clr}/lib/libamdhip64.so')|" tinygrad/runtime/autogen/hip.py
 
       # patch correct path to comgr
-      substituteInPlace tinygrad/runtime/autogen/comgr.py --replace-fail "os.getenv('ROCM_PATH', '/opt/rocm')" "'${rocmPackages.rocm-comgr}'"
+      sed -i "s|^dll = c\.DLL.*|dll = c.DLL('comgr', '${rocmPackages.rocm-comgr}/lib/libamd_comgr.so')|" tinygrad/runtime/autogen/comgr.py
       substituteInPlace tinygrad/runtime/support/compiler_amd.py --replace-fail "/opt/rocm/include" "${rocmPackages.clr}/include"
 
       # patch correct path to hsa
-      substituteInPlace tinygrad/runtime/autogen/hsa.py --replace-fail "os.getenv('ROCM_PATH', '/opt/rocm')" "'${rocmPackages.rocm-runtime}'"
+      sed -i "s|^dll = c\.DLL.*|dll = c.DLL('hsa', '${rocmPackages.rocm-runtime}/lib/libhsa-runtime64.so')|" tinygrad/runtime/autogen/hsa.py
     '')
     + (lib.optionalString cudaSupport ''
       # patch correct path to cuda
-      substituteInPlace tinygrad/runtime/autogen/nvrtc.py --replace-fail "'nvrtc', 'nvrtc'" "'nvrtc', '${lib.getLib cudaPackages.cuda_nvrtc}/lib/libnvrtc.so'"
-      substituteInPlace tinygrad/runtime/autogen/cuda.py --replace-fail "'cuda', 'cuda'" "'cuda', '${addDriverRunpath.driverLink}/lib/libcuda.so'"
+      sed -i "s|^dll = c\.DLL.*|dll = c.DLL('nvrtc', '${lib.getLib cudaPackages.cuda_nvrtc}/lib/libnvrtc.so')|" tinygrad/runtime/autogen/nvrtc.py
+      sed -i "s|^dll = c\.DLL.*|dll = c.DLL('cuda', '${addDriverRunpath.driverLink}/lib/libcuda.so')|" tinygrad/runtime/autogen/cuda.py
 
       # patch correct path to include
       substituteInPlace tinygrad/runtime/support/compiler_cuda.py \
