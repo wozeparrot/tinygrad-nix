@@ -59,11 +59,11 @@
     "tinygrad": {
       "flake": false,
       "locked": {
-        "lastModified": 1777743919,
-        "narHash": "sha256-3jVyD5QSAWhGhorD3BOMMIttYsx/Y4UPsm+uA7BzxFM=",
+        "lastModified": 1777786305,
+        "narHash": "sha256-ev+2Xaybl/j7rUV2rJQTzjsStsOioTW0ZXJDphLVv+s=",
         "owner": "tinygrad",
         "repo": "tinygrad",
-        "rev": "9717d3a3a234d6b7731ac94e31e12c501b1d9a6a",
+        "rev": "419d5255539ed7d6270af822bfd46dd1c301a80d",
         "type": "github"
       },
       "original": {
