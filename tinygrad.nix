@@ -18,6 +18,9 @@
   hypothesis,
   openai,
   z3-solver,
+  safetensors,
+  capstone,
+  gguf,
   pytestCheckHook,
   writableTmpDirAsHomeHook,
   llvmSupport ? true,
@@ -110,6 +113,9 @@ buildPythonPackage {
     hypothesis
     openai
     z3-solver
+    safetensors
+    capstone
+    gguf
   ];
 
   preCheck = ''
@@ -117,8 +123,9 @@ buildPythonPackage {
     export CC=${llvmPackages_latest.clang-unwrapped}/bin/clang
   '';
 
-  pytestFlagsArray = [
+  enabledTestPaths = [
     "test/null"
+    "test/unit"
     "test/backend"
   ];
 
@@ -139,5 +146,16 @@ buildPythonPackage {
     "test_llama_pat"
     "test_llama_early_tokenize"
     "test_autogen.py"
+    "test_huggingface_enet_safetensors"
+    "test_load_convnext"
+    "test_load_enet"
+    "test_load_enet_alt"
+    "test_load_llama2bfloat"
+    "test_load_resnet"
+    "test_load_gpt2_q4_1"
+    "test_load_sample_q6_k"
+    "test_load_tinyllama_q4_0"
+    "test_load_tinyllama_q8_0"
+    "test_gguf_load_no_tensor_leak"
   ];
 }
