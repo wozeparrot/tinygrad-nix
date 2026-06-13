@@ -74,6 +74,7 @@ buildPythonPackage {
 
       # patch correct path to comgr
       sed -i "s|^dll = c\.DLL.*|dll = c.DLL('comgr', '${rocmPackages.rocm-comgr}/lib/libamd_comgr.so')|" tinygrad/runtime/autogen/comgr.py
+      sed -i "s|^dll = c\.DLL.*|dll = c.DLL('comgr', '${rocmPackages.rocm-comgr}/lib/libamd_comgr.so')|" tinygrad/runtime/autogen/comgr_3.py
       substituteInPlace tinygrad/runtime/support/compiler_amd.py --replace-fail "/opt/rocm/include" "${rocmPackages.clr}/include"
 
       # patch correct path to hsa
