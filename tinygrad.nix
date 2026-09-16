@@ -10,6 +10,7 @@
   cudaPackages,
   setuptools,
   wheel,
+  pyprojectVersionPatchHook,
   numpy,
   tqdm,
   torch,
@@ -28,9 +29,17 @@
   rocmSupport ? false,
   cudaSupport ? false,
 }:
+let
+  # nixpkgs' pythonMetadataCheckPhase requires the derivation version to be valid
+  # PEP 440 and to match the version in the built metadata, so a bare git rev no
+  # longer works. Use upstream's version from pyproject.toml with the rev as a
+  # local version segment (e.g. "0.14.0+gdf59c74") and let pyprojectVersionPatchHook
+  # sync pyproject.toml to it.
+  upstreamVersion = (lib.importTOML "${inputs.tinygrad}/pyproject.toml").project.version;
+in
 buildPythonPackage {
   pname = "tinygrad";
-  version = inputs.tinygrad.shortRev;
+  version = "${upstreamVersion}+g${inputs.tinygrad.shortRev}";
   pyproject = true;
   src = inputs.tinygrad;
 
@@ -56,6 +65,11 @@ buildPythonPackage {
 
       # patch gcc
       substituteInPlace tinygrad/runtime/support/system.py --replace-fail "ctypes.util.find_library('atomic')" '"${gcc.cc.lib}/lib/libatomic.so"'
+
+      # patch libm and libgcc_s
+      substituteInPlace tinygrad/runtime/ops_cpu.py \
+        --replace-fail "DLL('m', 'm')" "DLL('m', '${stdenv.cc.libc}/lib/libm.so.6')" \
+        --replace-fail "else 'gcc_s'" "else '${gcc.cc.lib}/lib/libgcc_s.so.1'"
 
       # patch libclang
       sed -i "s|^dll = c\.DLL.*|dll = c.DLL('libclang', '${llvmPackages_latest.libclang.lib}/lib/libclang.so')|" tinygrad/runtime/autogen/libclang.py
@@ -95,6 +109,7 @@ buildPythonPackage {
   nativeBuildInputs = [
     setuptools
     wheel
+    pyprojectVersionPatchHook
   ];
 
   propagatedBuildInputs = [
@@ -122,6 +137,8 @@ buildPythonPackage {
   preCheck = ''
     export DEV=CPU
     export CC=${llvmPackages_latest.clang-unwrapped}/bin/clang
+    # test/null/test_elf.py::test_link loads libm via DLL('m', 'm')
+    export M_PATH=${stdenv.cc.libc}/lib/libm.so.6
   '';
 
   enabledTestPaths = [
@@ -146,6 +163,8 @@ buildPythonPackage {
     "test_llama_repeat"
     "test_llama_pat"
     "test_llama_early_tokenize"
+    "test_llama_continued_conversation"
+    "test_long_cached_prompt_matches_fresh_tokenization"
     "test_autogen.py"
     "test_huggingface_enet_safetensors"
     "test_load_convnext"

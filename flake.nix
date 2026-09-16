@@ -51,7 +51,7 @@
         };
       in {
         packages = rec {
-          inherit (pkgs.python312Packages) tinygrad tinygradWithRocm tinygradWithCuda tinygradFull;
+          inherit (pkgs.python3Packages) tinygrad tinygradWithRocm tinygradWithCuda tinygradFull;
           default = tinygradFull;
         };
       }
