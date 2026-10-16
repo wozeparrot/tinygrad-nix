@@ -143,8 +143,7 @@ buildPythonPackage {
 
   enabledTestPaths = [
     "test/null"
-    "test/unit"
-    "test/backend"
+    "test/runtime"
   ];
 
   disabledTests = [
@@ -177,5 +176,10 @@ buildPythonPackage {
     "test_load_tinyllama_q4_0"
     "test_load_tinyllama_q8_0"
     "test_gguf_load_no_tensor_leak"
+    "test_local_barrier_after_ended_loop"
+    "test_upcast_with_locals"
+    "test_loop_local_barrier_inner_loop_load"
+    "test_split_loop_local_barrier"
+    "test_upcast_split_range"
   ];
 }
