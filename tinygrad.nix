@@ -181,5 +181,7 @@ buildPythonPackage {
     "test_loop_local_barrier_inner_loop_load"
     "test_split_loop_local_barrier"
     "test_upcast_split_range"
+    "test_clip"
+    "test_pad_replicate_mode"
   ];
 }
