@@ -183,5 +183,6 @@ buildPythonPackage {
     "test_upcast_split_range"
     "test_clip"
     "test_pad_replicate_mode"
+    "test_index_wmma_after_range"
   ];
 }
